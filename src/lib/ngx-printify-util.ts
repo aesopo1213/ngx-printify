@@ -53,10 +53,18 @@ export class NgxPrintifyUtil {
             const bodyContent: string[] = [];
 
             if (useExistingCss) {
+                // Clone existing stylesheets
                 const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
                 stylesheets.forEach(sheet => {
                     const clonedSheet = sheet.cloneNode(true) as HTMLLinkElement;
                     headContent.push(clonedSheet.outerHTML);
+                });
+
+                // Clone existing style tags
+                const styleTags = document.querySelectorAll('style');
+                styleTags.forEach(style => {
+                    const clonedStyle = style.cloneNode(true) as HTMLStyleElement;
+                    headContent.push(clonedStyle.outerHTML);
                 });
             }
 
