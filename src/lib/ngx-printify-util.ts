@@ -14,23 +14,23 @@ export interface PrintWindowOptions {
 export class NgxPrintifyUtil {
     // Formats the print window options into a string
     static formatPrintWindowOptions(options: PrintWindowOptions): string {
-        return Object.entries(options)
-            .map(([key, value]) => `${key}=${value}`)
-            .join(',');
+        const entries = Object.entries(options);
+        let result = '';
+
+        for (let i = 0; i < entries.length; i++) {
+            const key = entries[i][0];
+            const value = entries[i][1];
+            result += `${key}=${value}`;
+            if (i < entries.length - 1) {
+                result += ','; // Add comma between entries
+            }
+        }
+
+        return result;
     }
 
     // Common printing logic
-    static preparePrintWindow({
-        printItemsId,
-        printTitle,
-        printTemplate,
-        useExistingCss = false,
-        printStyle = {},
-        styleSheetFile,
-        printWindowOptions = { width: 800, height: 600, menubar: 'no', toolbar: 'no', location: 'no', status: 'no', resizable: 'yes', scrollbars: 'yes' },
-        closeWindow = true,
-        previewOnly = false
-    }: {
+    static preparePrintWindow(params: {
         printItemsId?: string;
         printTitle?: string;
         printTemplate?: TemplateRef<any>;
@@ -41,6 +41,8 @@ export class NgxPrintifyUtil {
         closeWindow?: boolean;
         previewOnly?: boolean;
     }): void {
+        const { printItemsId, printTitle, printTemplate, useExistingCss = false, printStyle = {}, styleSheetFile, printWindowOptions = { width: 800, height: 600, menubar: 'no', toolbar: 'no', location: 'no', status: 'no', resizable: 'yes', scrollbars: 'yes' }, closeWindow = true, previewOnly = false } = params;
+
         if (printItemsId || printTemplate) {
             const printWindow = window.open('', '_blank', this.formatPrintWindowOptions(printWindowOptions));
 
@@ -85,8 +87,6 @@ export class NgxPrintifyUtil {
                 const embeddedView = printTemplate.createEmbeddedView({});
                 embeddedView.rootNodes.forEach(node => {
                     const printTemplateNode = node.cloneNode(true) as HTMLElement;
-
-                    // Apply styles to the print template node
                     this.applyStyles(printTemplateNode, printStyle);
                     tempDiv.appendChild(printTemplateNode);
                 });
@@ -101,7 +101,7 @@ export class NgxPrintifyUtil {
                     const printContent = document.getElementById(printItemId);
                     if (printContent) {
                         const printContentNode = printContent.cloneNode(true) as HTMLElement;
-                        this.applyStyles(printContentNode, printStyle); // Apply styles to the content node
+                        this.applyStyles(printContentNode, printStyle);
                         bodyContent.push(printContentNode.outerHTML);
                     }
                 }
