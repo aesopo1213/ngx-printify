@@ -5,6 +5,7 @@
 ## Table of Contents
 
 - [Installation](#installation)
+- [Dependencies](#dependencies)
 - [Usage](#usage)
   - [Directive Usage](#directive-usage)
   - [Service Usage](#service-usage)
@@ -15,10 +16,20 @@
 
 To install `ngx-printify`, use npm:
 
-```bash
 npm install ngx-printify --save
-```
 
+## Dependencies
+
+### Version Compatibility
+
+The `NgxPrintify` library supports the following Angular versions based on its releases:
+
+| NgxPrintify Version | Angular Versions Supported    |
+|----------------------|------------------------------|
+| 1.1.0                | Angular 10.0.0 to 14.2.3     |
+
+
+Ensure that your Angular project is within the specified version range to utilize the features of `NgxPrintify` effectively.
 ## Usage
 
 ### Directive Usage
