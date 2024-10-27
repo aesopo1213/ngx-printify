@@ -15,13 +15,13 @@
   ],
   "author": "Paul Yim",
   "license": "MIT",
-  "homepage": "https://github.com/yourusername/ngx-printify-util#readme",
+  "homepage": "https://github.com/aesopo1213/ngx-printify#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/ngx-printify-util.git"
+    "url": "git+https://github.com/aesopo1213/ngx-printify.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/ngx-printify-util/issues"
+    "url": "https://github.com/aesopo1213/ngx-printify/issues"
   },
   "peerDependencies": {
     "@angular/core": "^12.0.0 || ^13.0.0 || ^14.0.0",
