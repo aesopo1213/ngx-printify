@@ -27,6 +27,7 @@ The `NgxPrintify` library supports the following Angular versions based on its r
 | NgxPrintify Version | Angular Versions Supported    |
 |----------------------|------------------------------|
 | 1.1.0                | Angular 10.0.0 to 14.2.3     |
+| 1.2.0                | Angular 15.0.0               |
 
 
 Ensure that your Angular project is within the specified version range to utilize the features of `NgxPrintify` effectively.
