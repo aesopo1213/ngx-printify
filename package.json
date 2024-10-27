@@ -1,0 +1,36 @@
+{
+  "name": "ngx-printify",
+  "version": "1.0.0",
+  "description": "A utility for printing in Angular applications",
+  "scripts": {
+    "build": "ng build ngx-printify",
+    "test": "ng test",
+    "lint": "ng lint"
+  },
+  "keywords": [
+    "angular",
+    "print",
+    "utility",
+    "ngx"
+  ],
+  "author": "Paul Yim",
+  "license": "MIT",
+  "homepage": "https://github.com/yourusername/ngx-printify-util#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/ngx-printify-util.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/ngx-printify-util/issues"
+  },
+  "peerDependencies": {
+    "@angular/core": "^12.0.0 || ^13.0.0 || ^14.0.0",
+    "@angular/common": "^12.0.0 || ^13.0.0 || ^14.0.0"
+  },
+  "devDependencies": {
+    "typescript": "~4.2.0",
+    "@angular/compiler": "^12.0.0 || ^13.0.0 || ^14.0.0",
+    "@angular/compiler-cli": "^12.0.0 || ^13.0.0 || ^14.0.0",
+    "ng-packagr": "^12.0.0"
+  }
+}
