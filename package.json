@@ -1,6 +1,6 @@
 {
   "name": "ngx-printify",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A utility for printing in Angular applications",
   "scripts": {
     "build": "ng build ngx-printify",
@@ -24,8 +24,8 @@
     "url": "https://github.com/aesopo1213/ngx-printify/issues"
   },
   "peerDependencies": {
-    "@angular/common": "^17.3.0",
-    "@angular/core": "^17.3.0"
+    "@angular/common": "^18.0.0",
+    "@angular/core": "^18.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
