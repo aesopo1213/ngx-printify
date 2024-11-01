@@ -114,7 +114,7 @@ export class NgxPrintifyUtil {
             if (printTemplate) {
                 const tempDiv = document.createElement('div');
                 const embeddedView = printTemplate.createEmbeddedView({});
-                embeddedView.rootNodes.forEach(node => {
+                embeddedView.rootNodes.forEach((node: any) => {
                     const printTemplateNode = node.cloneNode(true) as HTMLElement;
                     this.applyStyles(printTemplateNode, printStyle); // Apply styles here
                     tempDiv.appendChild(printTemplateNode);
