@@ -1,6 +1,6 @@
 {
   "name": "ngx-printify",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "A utility for printing in Angular applications",
   "scripts": {
     "build": "ng build ngx-printify",
