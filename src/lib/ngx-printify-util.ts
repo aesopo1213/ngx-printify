@@ -1,5 +1,3 @@
-import { TemplateRef } from '@angular/core';
-
 export interface PrintWindowOptions {
     width?: number;
     height?: number;
@@ -14,10 +12,21 @@ export interface PrintWindowOptions {
 export class NgxPrintifyUtil {
     // Formats the print window options into a string
     static formatPrintWindowOptions(options: PrintWindowOptions): string {
-        return Object.entries(options)
-            .map(([key, value]) => `${key}=${value}`)
-            .join(',');
+        const entries = Object.entries(options);
+        let result = '';
+
+        for (let i = 0; i < entries.length; i++) {
+            const key = entries[i][0];
+            const value = entries[i][1];
+            result += `${key}=${value}`;
+            if (i < entries.length - 1) {
+                result += ','; // Add comma between entries
+            }
+        }
+
+        return result;
     }
+
 
     // Common printing logic
     static preparePrintWindow({
@@ -33,7 +42,7 @@ export class NgxPrintifyUtil {
     }: {
         printItemsId?: string;
         printTitle?: string;
-        printTemplate?: TemplateRef<any>;
+        printTemplate?: any;
         useExistingCss?: boolean;
         printStyle?: { [key: string]: { [property: string]: string } };
         styleSheetFile?: string;
@@ -57,7 +66,14 @@ export class NgxPrintifyUtil {
                 const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
                 stylesheets.forEach(sheet => {
                     const clonedSheet = sheet.cloneNode(true) as HTMLLinkElement;
-                    headContent.push(clonedSheet.outerHTML);
+                    const newLink = document.createElement('link'); // Create a new link element
+                    newLink.rel = 'stylesheet'; // Set the relationship to stylesheet
+                    newLink.href = clonedSheet.href; // Set the href to the stylesheet's URL
+                    newLink.media = 'all'; // Set media type to all
+                    newLink.onload = () => {
+                        newLink.media = 'all'; // Apply styles after loading
+                    };
+                    headContent.push(newLink.outerHTML);
                 });
 
                 // Clone existing style tags
@@ -106,11 +122,16 @@ export class NgxPrintifyUtil {
                     }
                 }
             }
+            const body = document.body;
+            // Get body class
+            const bodyClass = body.className;
+            // Get body inline styles
+            const bodyStyles = body.getAttribute('style') || '';
 
             const fullHtml = `
                 <html>
                     <head>${headContent.join('')}</head>
-                    <body>${bodyContent.join('')}</body>
+                    <body class="${bodyClass}" style="${bodyStyles}>${bodyContent.join('')}</body>
                 </html>
             `;
 
