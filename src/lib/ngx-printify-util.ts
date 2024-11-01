@@ -29,7 +29,8 @@ export class NgxPrintifyUtil {
 
 
     // Common printing logic
-    static preparePrintWindow({
+    // Common printing logic
+    static async preparePrintWindow({
         printItemsId,
         printTitle,
         printTemplate,
@@ -49,7 +50,7 @@ export class NgxPrintifyUtil {
         printWindowOptions?: PrintWindowOptions;
         closeWindow?: boolean;
         previewOnly?: boolean;
-    }): void {
+    }): Promise<void> {
         if (printItemsId || printTemplate) {
             const printWindow = window.open('', '_blank', this.formatPrintWindowOptions(printWindowOptions));
 
@@ -61,20 +62,33 @@ export class NgxPrintifyUtil {
             const headContent: string[] = [];
             const bodyContent: string[] = [];
 
-            if (useExistingCss) {
-                // Clone existing stylesheets
-                const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
-                stylesheets.forEach(sheet => {
-                    const clonedSheet = sheet.cloneNode(true) as HTMLLinkElement;
-                    const newLink = document.createElement('link'); // Create a new link element
-                    newLink.rel = 'stylesheet'; // Set the relationship to stylesheet
-                    newLink.href = clonedSheet.href; // Set the href to the stylesheet's URL
-                    newLink.media = 'all'; // Set media type to all
-                    newLink.onload = () => {
-                        newLink.media = 'all'; // Apply styles after loading
+            const loadStylesheet = (href: string): Promise<void> => {
+                return new Promise((resolve, reject) => {
+                    const link = printWindow.document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = href;
+                    link.media = 'all';
+
+                    link.onload = () => {
+                        resolve();
                     };
-                    headContent.push(newLink.outerHTML);
+                    link.onerror = () => {
+                        console.error(`Failed to load stylesheet: ${href}`);
+                        reject(`Failed to load stylesheet: ${href}`);
+                    };
+
+                    printWindow.document.head.appendChild(link);
                 });
+            };
+
+            if (useExistingCss) {
+                const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
+                const loadPromises = Array.from(stylesheets).map(sheet => {
+                    const linkElement = sheet as HTMLLinkElement;
+                    headContent.push(`<link rel="stylesheet" href="${linkElement.href}" media="all">`);
+                    return loadStylesheet(linkElement.href);
+                });
+                await Promise.all(loadPromises);
 
                 // Clone existing style tags
                 const styleTags = document.querySelectorAll('style');
@@ -84,16 +98,17 @@ export class NgxPrintifyUtil {
                 });
             }
 
-            if (printTitle) {
-                headContent.push(`<title>${printTitle}</title>`);
-            }
-
             if (styleSheetFile) {
                 const customStylesheets = styleSheetFile.split(',');
-                customStylesheets.forEach(sheetUrl => {
-                    const link = `<link rel="stylesheet" href="${sheetUrl.trim()}">`;
-                    headContent.push(link);
+                const loadPromises = customStylesheets.map(sheetUrl => {
+                    headContent.push(`<link rel="stylesheet" href="${sheetUrl.trim()}" media="all">`);
+                    return loadStylesheet(sheetUrl.trim());
                 });
+                await Promise.all(loadPromises);
+            }
+
+            if (printTitle) {
+                headContent.push(`<title>${printTitle}</title>`);
             }
 
             if (printTemplate) {
@@ -101,9 +116,7 @@ export class NgxPrintifyUtil {
                 const embeddedView = printTemplate.createEmbeddedView({});
                 embeddedView.rootNodes.forEach(node => {
                     const printTemplateNode = node.cloneNode(true) as HTMLElement;
-
-                    // Apply styles to the print template node
-                    this.applyStyles(printTemplateNode, printStyle);
+                    this.applyStyles(printTemplateNode, printStyle); // Apply styles here
                     tempDiv.appendChild(printTemplateNode);
                 });
 
@@ -117,41 +130,37 @@ export class NgxPrintifyUtil {
                     const printContent = document.getElementById(printItemId);
                     if (printContent) {
                         const printContentNode = printContent.cloneNode(true) as HTMLElement;
-                        this.applyStyles(printContentNode, printStyle); // Apply styles to the content node
+                        this.applyStyles(printContentNode, printStyle); // Apply styles here
                         bodyContent.push(printContentNode.outerHTML);
                     }
                 }
             }
+
             const body = document.body;
-            // Get body class
             const bodyClass = body.className;
-            // Get body inline styles
             const bodyStyles = body.getAttribute('style') || '';
 
             const fullHtml = `
                 <html>
                     <head>${headContent.join('')}</head>
-                    <body class="${bodyClass}" style="${bodyStyles}>${bodyContent.join('')}</body>
+                    <body class="${bodyClass}" style="${bodyStyles}">${bodyContent.join('')}</body>
                 </html>
             `;
 
             printWindow.document.write(fullHtml);
             printWindow.document.close();
 
-            if (previewOnly) {
-                return; // Exit without triggering print
-            }
+            printWindow.onload = () => {
+                if (closeWindow) {
+                    printWindow.onafterprint = () => {
+                        printWindow.close();
+                    };
+                }
 
-            if (closeWindow) {
-                printWindow.onafterprint = () => {
-                    printWindow.close();
-                };
-            }
-
-            printWindow.focus();
-            if (!previewOnly) {
-                printWindow.print();
-            }
+                if (!previewOnly) {
+                    printWindow.print();
+                }
+            };
         }
     }
 
